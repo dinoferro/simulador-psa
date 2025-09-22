@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Indiana Peugeot</title>
+<style>
+  :root{
+    --primary:#003366;
+    --primary-600:#0055aa;
+    --bg:#f4f6f8;
+    --card:#ffffff;
+    --muted:#667085;
+  }
+  *{box-sizing:border-box}
+  body{
+    font-family: Arial, sans-serif;
+    background:var(--bg);
+    margin:0;
+    color:#1f2937;
+  }
+  header{
+    background:linear-gradient(120deg,var(--primary),#00264d);
+    color:#fff;
+    padding:1.25rem 1rem;
+    text-align:center;
+  }
+  header h1{margin:0;font-size:1.75rem}
+  header p{margin:.25rem 0 0;color:#dbeafe}
+  main{
+    max-width:1000px;
+    margin:0 auto;
+    padding:1rem;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:1rem;
+  }
+  .card{
+    background:var(--card);
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    padding:1rem;
+  }
+  .form .form-group{margin-bottom:.75rem}
+  label{font-weight:700;font-size:.9rem}
+  input, select, button{
+    width:100%;
+    padding:.65rem .75rem;
+    margin-top:.35rem;
+    border:1px solid #e5e7eb;
+    border-radius:8px;
+    font-size:1rem;
+  }
+  input:focus, select:focus{
+    outline:none;
+    border-color:var(--primary-600);
+    box-shadow:0 0 0 3px rgba(0,85,170,.15);
+  }
+  button{
+    background:var(--primary);
+    color:#fff;
+    cursor:pointer;
+    font-weight:700;
+    transition:.15s ease-in-out;
+  }
+  button:hover{background:var(--primary-600)}
+  .actions{
+    display:flex;
+    gap:.75rem;
+    margin-top:.25rem;
+  }
+  .actions button{flex:1}
+  .muted{color:var(--muted); font-size:.9rem}
+  .results{
+    margin-top:1rem;
+  }
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(270px,1fr));
+    gap:1rem;
+  }
+  .plan-card h3{
+    margin:.25rem 0 .5rem;
+    color:var(--primary);
+    font-size:1.1rem;
+  }
+  .row{
+    display:flex;
+    justify-content:space-between;
+    margin:.25rem 0;
+    font-size:.95rem;
+  }
+  .tag{
+    display:inline-block;
+    padding:.15rem .5rem;
+    border-radius:999px;
+    background:#eef2ff;
+    color:#3730a3;
+    font-size:.8rem;
+    font-weight:700;
+    margin-right:.5rem;
+  }
+  .empty{
+    text-align:center;
+    color:var(--muted);
+    padding:2rem 1rem;
+  }
+  @media (max-width: 720px){
+    .grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Indiana Peugeot</h1>
+  <p>Simulador de financiación</p>
+</header>
+
+<main>
+  <div class="grid">
+    <div class="card form" style="grid-column: span 12;">
+      <div class="grid">
+        <div class="form-group" style="grid-column: span 12;">
+          <label for="modelo">Modelo</label>
+          <select id="modelo">
+            <option value="">Seleccione un modelo</option>
+            <option value="208">208</option>
+            <option value="2008">2008</option>
+            <option value="Partner">Partner</option>
+            <option value="3008">3008</option>
+            <option value="Expert">Expert</option>
+            <option value="Boxer">Boxer</option>
+            <option value="5008">5008</option>
+          </select>
+          <div class="muted">Elegí el modelo. Los planes se filtran automáticamente según la tabla.</div>
+        </div>
+
+        <div class="form-group" style="grid-column: span 6;">
+          <label for="precio">Precio de la unidad (ARS)</label>
+          <input type="number" id="precio" placeholder="Ej: 15000000" min="0" step="1000" />
+        </div>
+
+        <div class="form-group" style="grid-column: span 6;">
+          <label for="anticipo">Anticipo del cliente (ARS)</label>
+          <input type="number" id="anticipo" placeholder="Ej: 5000000" min="0" step="1000" />
+        </div>
+
+        <div class="form-group" style="grid-column: span 12;">
+          <div class="actions">
+            <button id="btnCalcular">Calcular opciones</button>
+            <button id="btnLimpiar" style="background:#64748b">Limpiar</button>
+          </div>
+          <div class="muted" style="margin-top:.5rem">
+            La cuota se calcula como: (faltante / 1000) × coeficiente. El gasto de otorgamiento = faltante × % × 1.21 (IVA).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card results" style="grid-column: span 12;">
+      <div id="resultado" class="cards"></div>
+      <div id="vacio" class="empty">Ingresá modelo, precio y anticipo para ver las opciones disponibles.</div>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Tabla EXACTA de tu última imagen
+  // Campos: maxFinanciar, cuotas, tna, gasto (otorg%), coef, modelos[], tipo
+  const planes = [
+    // FIJA (Azul)
+    { maxFinanciar: 12000000, cuotas: 12, tna: 0.00, gasto: 10, coef: 83.33, modelos: ["Todos"], tipo: "FIJA" },
+    { maxFinanciar: 12000000, cuotas: 18, tna: 12.90, gasto: 10, coef: 63.66, modelos: ["Todos"], tipo: "FIJA" },
+
+    { maxFinanciar: 16000000, cuotas: 18, tna: 12.90, gasto: 12, coef: 63.66, modelos: ["208","2008"], tipo: "FIJA" },
+    { maxFinanciar: 16000000, cuotas: 24, tna: 22.90, gasto: 12, coef: 56.33, modelos: ["208","2008"], tipo: "FIJA" },
+    { maxFinanciar: 16000000, cuotas: 36, tna: 34.90, gasto: 12, coef: 51.29, modelos: ["208","2008"], tipo: "FIJA" },
+
+    
+    { maxFinanciar: 20000000, cuotas: 18, tna: 25.90, gasto: 12, coef: 72.17, modelos: ["Todos"], tipo: "FIJA" },
+    { maxFinanciar: 20000000, cuotas: 24, tna: 34.90, gasto: 12, coef: 64.57, modelos: ["Todos"], tipo: "FIJA" },
+    { maxFinanciar: 20000000, cuotas: 36, tna: 44.90, gasto: 12, coef: 58.87, modelos: ["Todos"], tipo: "FIJA" },
+    
+    
+    { maxFinanciar: 32000000, cuotas: 12, tna: 32.90, gasto: 8, coef: 104.68, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
+    { maxFinanciar: 32000000, cuotas: 18, tna: 44.90, gasto: 8, coef: 85.20, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
+    { maxFinanciar: 32000000, cuotas: 24, tna: 49.90, gasto: 8, coef: 75.39, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
+    { maxFinanciar: 32000000, cuotas: 36, tna: 56.90, gasto: 8, coef: 68.40, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
+    { maxFinanciar: 32000000, cuotas: 48, tna: 59.90, gasto: 8, coef: 65.73, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
+
+    // UVA (Verde)
+    { maxFinanciar: 18000000, cuotas: 12, tna: 2.90, gasto: 2, coef: 85.16, modelos: ["208","Partner","2008"], tipo: "UVA" },
+    { maxFinanciar: 18000000, cuotas: 24, tna: 12.90, gasto: 2, coef: 49.75, modelos: ["208","Partner","2008"], tipo: "UVA" },
+    { maxFinanciar: 18000000, cuotas: 36, tna: 15.90, gasto: 2, coef: 37.89, modelos: ["208","Partner","2008"], tipo: "UVA" },
+    { maxFinanciar: 18000000, cuotas: 48, tna: 19.90, gasto: 2, coef: 33.86, modelos: ["208","Partner","2008"], tipo: "UVA" },
+
+    { maxFinanciar: 22000000, cuotas: 12, tna: 0.00, gasto: 7, coef: 83.33, modelos: ["208","Partner","2008"], tipo: "UVA" },
+    { maxFinanciar: 22000000, cuotas: 24, tna: 5.90, gasto: 10, coef: 45.31, modelos: ["208","Partner","2008"], tipo: "UVA" },
+    { maxFinanciar: 22000000, cuotas: 36, tna: 12.90, gasto: 10, coef: 35.90, modelos: ["208","Partner","2008"], tipo: "UVA" },
+    { maxFinanciar: 22000000, cuotas: 48, tna: 16.90, gasto: 10, coef: 31.76, modelos: ["208","Partner","2008"], tipo: "UVA" },
+
+    { maxFinanciar: 26000000, cuotas: 36, tna: 14.90, gasto: 10, coef: 37.22, modelos: ["208","Partner","2008"], tipo: "UVA" },
+    { maxFinanciar: 26000000, cuotas: 48, tna: 17.90, gasto: 10, coef: 32.46, modelos: ["208","Partner","2008"], tipo: "UVA" }
+    
+  ];
+
+  const $ = (id)=>document.getElementById(id);
+
+  function formatMoney(n){
+    return n.toLocaleString('es-AR', {minimumFractionDigits:0, maximumFractionDigits:0});
+  }
+
+  function calcular(){
+    const modelo = $("modelo").value;
+    const precio = parseFloat($("precio").value);
+    const anticipo = parseFloat($("anticipo").value);
+    const resultadoDiv = $("resultado");
+    const vacioDiv = $("vacio");
+
+    resultadoDiv.innerHTML = "";
+
+    if(!modelo || Number.isNaN(precio) || Number.isNaN(anticipo)){
+      vacioDiv.textContent = "Completá modelo, precio y anticipo para ver las opciones.";
+      vacioDiv.style.display = "block";
+      return;
+    }
+
+    const faltante = precio - anticipo;
+
+    if (faltante <= 0){
+      vacioDiv.textContent = "El anticipo cubre el valor de la unidad. Ingresá un anticipo menor para simular financiación.";
+      vacioDiv.style.display = "block";
+      return;
+    }
+
+    // Filtro por modelos y por tope de financiación
+    const habilitaModelo = (p) =>
+      p.modelos.includes("Todos") ||
+      p.modelos.includes(modelo);
+
+    const aptos = planes.filter(p => habilitaModelo(p) && faltante <= p.maxFinanciar);
+
+    if (aptos.length === 0){
+      vacioDiv.textContent = "No hay planes disponibles para este modelo y monto a financiar.";
+      vacioDiv.style.display = "block";
+      return;
+    }
+
+    vacioDiv.style.display = "none";
+
+    // Orden por cuota ascendente
+    aptos.sort((a,b)=>{
+      const ca = (faltante/1000)*a.coef;
+      const cb = (faltante/1000)*b.coef;
+      return ca - cb;
+    });
+
+    // Render
+    for(const p of aptos){
+      const cuota = (faltante / 1000) * p.coef;
+      const gastoTotal = (faltante * (p.gasto/100)) * 1.21;
+
+      const card = document.createElement("div");
+      card.className = "card plan-card";
+      card.innerHTML = `
+        <div class="row">
+          <div>
+            <span class="tag">${p.tipo}</span>
+            <span class="tag">${p.cuotas} cuotas</span>
+          </div>
+          <div class="muted">Tope: $${formatMoney(p.maxFinanciar)}</div>
+        </div>
+        <h3>Cuota: $${formatMoney(cuota)}</h3>
+        <div class="row"><span>Monto financiado</span><strong>$${formatMoney(faltante)}</strong></div>
+        <div class="row"><span>Gasto otorgamiento + IVA</span><strong>$${formatMoney(gastoTotal)}</strong></div>
+        <div class="row"><span>TNA</span><strong>${p.tna}%</strong></div>
+        <div class="row"><span>Modelo</span><strong>${modelo}</strong></div>
+      `;
+      resultadoDiv.appendChild(card);
+    }
+  }
+
+  function limpiar(){
+    $("modelo").value = "";
+    $("precio").value = "";
+    $("anticipo").value = "";
+    $("resultado").innerHTML = "";
+    $("vacio").textContent = "Ingresá modelo, precio y anticipo para ver las opciones disponibles.";
+    $("vacio").style.display = "block";
+  }
+
+  $("btnCalcular").addEventListener("click", calcular);
+  $("btnLimpiar").addEventListener("click", limpiar);
+</script>
+</body>
+</html>
