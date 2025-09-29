@@ -110,6 +110,25 @@
   @media (max-width: 720px){
     .grid{grid-template-columns:1fr}
   }
+  .tabs {
+    display: flex;
+    justify-content: center;
+    background: #e5e7eb;
+  }
+  .tab {
+    flex: 1;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .tab.active {
+    background: #fff;
+    border-bottom: 3px solid #003366;
+  }
+  .tab-content { 
+    margin-top: 1rem; 
+  }
 </style>
 </head>
 <body>
@@ -118,44 +137,97 @@
   <p>Simulador de financiación</p>
 </header>
 
+<div class="tabs">
+  <div class="tab active" onclick="showTab('okm')">0 km</div>
+  <div class="tab" onclick="showTab('usados')">Usados</div>
+</div>
+
 <main>
   <div class="grid">
     <div class="card form" style="grid-column: span 12;">
       <div class="grid">
-        <div class="form-group" style="grid-column: span 12;">
-          <label for="modelo">Modelo</label>
-          <select id="modelo">
-            <option value="">Seleccione un modelo</option>
-            <option value="208">208</option>
-            <option value="2008">2008</option>
-            <option value="Partner">Partner</option>
-            <option value="3008">3008</option>
-            <option value="Expert">Expert</option>
-            <option value="Boxer">Boxer</option>
-            <option value="5008">5008</option>
-          </select>
-          <div class="muted">Elegí el modelo. Los planes se filtran automáticamente según la tabla.</div>
-        </div>
 
-        <div class="form-group" style="grid-column: span 6;">
-          <label for="precio">Precio de la unidad (ARS)</label>
-          <input type="number" id="precio" placeholder="Ej: 15000000" min="0" step="1000" />
-        </div>
-
-        <div class="form-group" style="grid-column: span 6;">
-          <label for="anticipo">Anticipo del cliente (ARS)</label>
-          <input type="number" id="anticipo" placeholder="Ej: 5000000" min="0" step="1000" />
-        </div>
-
-        <div class="form-group" style="grid-column: span 12;">
-          <div class="actions">
-            <button id="btnCalcular">Calcular opciones</button>
-            <button id="btnLimpiar" style="background:#64748b">Limpiar</button>
+        <!-- OKM TAB -->
+        <div id="okm" class="tab-content" style="display:block; grid-column: span 12;">
+          <div class="form-group" style="grid-column: span 12;">
+            <label for="modelo">Modelo</label>
+            <select id="modelo">
+              <option value="">Seleccione un modelo</option>
+              <option value="208">208</option>
+              <option value="2008">2008</option>
+              <option value="Partner">Partner</option>
+              <option value="3008">3008</option>
+              <option value="Expert">Expert</option>
+              <option value="Boxer">Boxer</option>
+              <option value="5008">5008</option>
+            </select>
+            <div class="muted">Elegí el modelo. Los planes se filtran automáticamente según la tabla.</div>
           </div>
-          <div class="muted" style="margin-top:.5rem">
-            La cuota se calcula como: (faltante / 1000) × coeficiente. El gasto de otorgamiento = faltante × % × 1.21 (IVA).
+
+          <div class="form-group" style="grid-column: span 6;">
+            <label for="precio">Precio de la unidad (ARS)</label>
+            <input type="number" id="precio" placeholder="Ej: 15000000" min="0" step="1000" />
+          </div>
+
+          <div class="form-group" style="grid-column: span 6;">
+            <label for="anticipo">Anticipo del cliente (ARS)</label>
+            <input type="number" id="anticipo" placeholder="Ej: 5000000" min="0" step="1000" />
+          </div>
+
+          <div class="form-group" style="grid-column: span 12;">
+            <div class="actions">
+              <button id="btnCalcular">Calcular opciones</button>
+              <button id="btnLimpiar" style="background:#64748b">Limpiar</button>
+            </div>
+            <div class="muted" style="margin-top:.5rem">
+              La cuota se calcula como: (faltante / 1000) × coeficiente. El gasto de otorgamiento = faltante × % × 1.21 (IVA).
+            </div>
           </div>
         </div>
+
+        <!-- USADOS TAB -->
+        <div id="usados" class="tab-content" style="display:none; grid-column: span 12;">
+          <div class="form-group">
+            <label>Año de la unidad usada:</label>
+            <select id="anioUsado">
+              <option value="">Seleccione año</option>
+              <option value="2015">2015</option>
+              <option value="2016">2016</option>
+              <option value="2017">2017</option>
+              <option value="2018">2018</option>
+              <option value="2019">2019</option>
+              <option value="2020">2020</option>
+              <option value="2021">2021</option>
+              <option value="2022">2022</option>
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Precio de la unidad (ARS):</label>
+            <input type="number" id="precioUsado" placeholder="Ej: 12000000" min="0" step="1000">
+          </div>
+
+          <div class="form-group">
+            <label>Anticipo (ARS):</label>
+            <input type="number" id="anticipoUsado" placeholder="Ej: 3000000" min="0" step="1000">
+          </div>
+
+          <div class="form-group" style="margin-top:.5rem">
+            <div class="actions">
+              <button id="btnCalcularUsados">Calcular</button>
+            </div>
+            <div class="muted" style="margin-top:.5rem">
+              Para usados se aplica además un tope % sobre el valor de la unidad según año.
+            </div>
+          </div>
+
+          <div id="resultadoUsados" class="cards"></div>
+          <div id="vacioUsados" class="empty">Completá año, precio y anticipo para ver opciones de usados.</div>
+        </div>
+
       </div>
     </div>
 
@@ -167,24 +239,21 @@
 </main>
 
 <script>
-  // Tabla EXACTA de tu última imagen
-  // Campos: maxFinanciar, cuotas, tna, gasto (otorg%), coef, modelos[], tipo
+  // Tabla EXACTA de tu última imagen (OKM)
   const planes = [
     // FIJA (Azul)
     { maxFinanciar: 16000000, cuotas: 12, tna: 0.00, gasto: 10, coef: 83.33, modelos: ["Todos"], tipo: "FIJA" },
     { maxFinanciar: 16000000, cuotas: 18, tna: 12.90, gasto: 10, coef: 63.66, modelos: ["Todos"], tipo: "FIJA" },
     { maxFinanciar: 16000000, cuotas: 24, tna: 17.90, gasto: 10, coef: 53.01, modelos: ["Todos"], tipo: "FIJA" },
-    
+
     { maxFinanciar: 18000000, cuotas: 18, tna: 12.90, gasto: 10, coef: 63.66, modelos: ["208","2008"], tipo: "FIJA" },
     { maxFinanciar: 18000000, cuotas: 24, tna: 22.90, gasto: 10, coef: 56.33, modelos: ["208","2008"], tipo: "FIJA" },
     { maxFinanciar: 18000000, cuotas: 36, tna: 34.90, gasto: 10, coef: 51.29, modelos: ["208","2008"], tipo: "FIJA" },
 
-    
     { maxFinanciar: 22000000, cuotas: 18, tna: 25.90, gasto: 10, coef: 72.17, modelos: ["Todos"], tipo: "FIJA" },
     { maxFinanciar: 22000000, cuotas: 24, tna: 34.90, gasto: 10, coef: 64.57, modelos: ["Todos"], tipo: "FIJA" },
     { maxFinanciar: 22000000, cuotas: 36, tna: 44.90, gasto: 10, coef: 58.87, modelos: ["Todos"], tipo: "FIJA" },
-    
-    
+
     { maxFinanciar: 32000000, cuotas: 12, tna: 32.90, gasto: 8, coef: 104.68, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
     { maxFinanciar: 32000000, cuotas: 18, tna: 44.90, gasto: 8, coef: 85.20, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
     { maxFinanciar: 32000000, cuotas: 24, tna: 49.90, gasto: 8, coef: 75.39, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
@@ -203,7 +272,60 @@
     { maxFinanciar: 22000000, cuotas: 48, tna: 16.90, gasto: 10, coef: 31.76, modelos: ["208","Partner","2008"], tipo: "UVA" },
 
     { maxFinanciar: 26000000, cuotas: 36, tna: 14.90, gasto: 10, coef: 37.22, modelos: ["208","Partner","2008"], tipo: "UVA" },
-    { maxFinanciar: 26000000, cuotas: 48, tna: 17.90, gasto: 10, coef: 32.46, modelos: ["208","Partner","2008"], tipo: "UVA" }
+    { maxFinanciar: 26000000, cuotas: 48, tna: 17.90, gasto: 10, coef: 32.46, modelos: ["208","Partner","2008"], tipo: "UVA" },
+  ];
+
+  // Tabla de planes para Usados (valores base por plan) - corregido: 'anios' como array de números
+  const planesUsados = [
+    // Años 2025–2022
+    { maxFinanciar: 50000000, cuotas: 12, tna: 79.90, gasto: 0, coef: 137.60, anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 18, tna: 79.90, gasto: 0, coef: 110.96, anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 24, tna: 79.90, gasto: 0, coef: 98.57,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 36, tna: 79.90, gasto: 0, coef: 87.82,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 48, tna: 79.90, gasto: 0, coef: 83.73,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 60, tna: 79.90, gasto: 0, coef: 81.99,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+
+    { maxFinanciar: 50000000, cuotas: 12, tna: 46.90, gasto: 10, coef: 114.19, anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 18, tna: 56.90, gasto: 10, coef: 93.79,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 24, tna: 58.90, gasto: 10, coef: 82.13,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 36, tna: 62.90, gasto: 10, coef: 73.33,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 48, tna: 64.90, gasto: 10, coef: 70.13,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 60, tna: 64.90, gasto: 10, coef: 67.84,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+
+    // Años 2021–2018
+    { maxFinanciar: 30000000, cuotas: 12, tna: 79.90, gasto: 0, coef: 137.60, anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 18, tna: 79.90, gasto: 0, coef: 110.96, anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 24, tna: 79.90, gasto: 0, coef: 98.57,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 36, tna: 79.90, gasto: 0, coef: 87.82,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 48, tna: 79.90, gasto: 0, coef: 83.73,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 60, tna: 79.90, gasto: 0, coef: 81.99,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+
+    { maxFinanciar: 30000000, cuotas: 12, tna: 46.90, gasto: 10, coef: 114.19, anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 18, tna: 56.90, gasto: 10, coef: 93.79,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 24, tna: 58.90, gasto: 10, coef: 82.13,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 36, tna: 62.90, gasto: 10, coef: 73.33,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 48, tna: 64.90, gasto: 10, coef: 70.13,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 60, tna: 64.90, gasto: 10, coef: 67.84,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+
+    // Años 2017–2015
+    { maxFinanciar: 15000000, cuotas: 12, tna: 79.90, gasto: 0, coef: 137.60, anios: [2017,2016,2015], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 18, tna: 79.90, gasto: 0, coef: 110.96, anios: [2017,2016,2015], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 24, tna: 79.90, gasto: 0, coef: 98.57,  anios: [2017,2016,2015], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 36, tna: 79.90, gasto: 0, coef: 87.82,  anios: [2017,2016], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 48, tna: 79.90, gasto: 0, coef: 83.73,  anios: [2017], tipo: "FIJA" },
+
+    { maxFinanciar: 15000000, cuotas: 12, tna: 46.90, gasto: 10, coef: 114.19, anios: [2017,2016,2015], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 18, tna: 56.90, gasto: 10, coef: 93.79,  anios: [2017,2016,2015], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 24, tna: 58.90, gasto: 10, coef: 82.13,  anios: [2017,2016,2015], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 36, tna: 62.90, gasto: 10, coef: 73.33,  anios: [2017,2016], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 48, tna: 64.90, gasto: 10, coef: 67.84,  anios: [2017], tipo: "FIJA" },
+
+    // UVA usados (corregido: usa 'anios')
+    { maxFinanciar: 40000000, cuotas: 12, tna: 36.90, gasto: 0, coef: 107.37, anios: [2025,2024,2023,2022,2021,2020,2019,2018,2017,2016,2015], tipo: "UVA" },
+    { maxFinanciar: 40000000, cuotas: 24, tna: 36.90, gasto: 0, coef: 65.98,  anios: [2025,2024,2023,2022,2021,2020,2019,2018,2017,2016,2015], tipo: "UVA" },
+    { maxFinanciar: 40000000, cuotas: 36, tna: 36.90, gasto: 0, coef: 52.78,  anios: [2025,2024,2023,2022,2021,2020,2019,2018,2017,2016,2015], tipo: "UVA" },
+    { maxFinanciar: 40000000, cuotas: 48, tna: 36.90, gasto: 0, coef: 46.58,  anios: [2025,2024,2023,2022,2021,2020,2019,2018,2017,2016,2015], tipo: "UVA" },
+    { maxFinanciar: 40000000, cuotas: 60, tna: 36.90, gasto: 0, coef: 43.17,  anios: [2025,2024,2023,2022,2021,2020,2019,2018,2017,2016,2015], tipo: "UVA" }
     
   ];
 
@@ -211,6 +333,125 @@
 
   function formatMoney(n){
     return n.toLocaleString('es-AR', {minimumFractionDigits:0, maximumFractionDigits:0});
+  }
+
+  // Devuelve condiciones por antigüedad: pct (0..1), capMonetario (ARS) y maxCuotas (null = sin límite adicional)
+  function getCondicionesPorAnio(anio, precio){
+    const currentYear = new Date().getFullYear();
+    const antiguedad = currentYear - anio;
+
+    // Reglas que pediste:
+    // - Unidades hasta 3 años: 80% o hasta 50.000.000
+    // - 7 años: 75% o hasta 30.000.000
+    // - 8 años: 50% o hasta 15.000.000, max cuotas 48
+    // - 9 años: 50% o hasta 15.000.000, max cuotas 36
+    // - 10 años: 50% o hasta 15.000.000, max cuotas 24
+    // Ajustá valores acá si querés.
+
+    if (antiguedad <= 3){
+      return { pct: 0.80, cap: 50000000, maxCuotas: null };
+    }
+
+    if (antiguedad === 7){
+      return { pct: 0.75, cap: 30000000, maxCuotas: null };
+    }
+
+    if (antiguedad === 8){
+      return { pct: 0.50, cap: 15000000, maxCuotas: 48 };
+    }
+
+    if (antiguedad === 9){
+      return { pct: 0.50, cap: 15000000, maxCuotas: 36 };
+    }
+
+    if (antiguedad === 10){
+      return { pct: 0.50, cap: 15000000, maxCuotas: 24 };
+    }
+
+    // Default: conservador (puedes cambiar)
+    return { pct: 0.50, cap: 15000000, maxCuotas: 24 };
+  }
+
+  function calcularUsados(){
+    const anio = parseInt($("anioUsado").value);
+    const precio = parseFloat($("precioUsado").value);
+    const anticipo = parseFloat($("anticipoUsado").value);
+    const resultadoDiv = $("resultadoUsados");
+    const vacioDiv = $("vacioUsados");
+
+    resultadoDiv.innerHTML = "";
+
+    if(Number.isNaN(anio) || Number.isNaN(precio) || Number.isNaN(anticipo)){
+      vacioDiv.textContent = "Completá año, precio y anticipo para ver las opciones.";
+      vacioDiv.style.display = "block";
+      return;
+    }
+
+    const faltante = precio - anticipo;
+    if (faltante <= 0){
+      vacioDiv.textContent = "El anticipo cubre el valor de la unidad. Ingresá un anticipo menor para simular financiación.";
+      vacioDiv.style.display = "block";
+      return;
+    }
+
+    const condiciones = getCondicionesPorAnio(anio, precio);
+    const pct = condiciones.pct;
+    const capPorAntiguedad = condiciones.cap;
+    const maxCuotasPorAntiguedad = condiciones.maxCuotas; // puede ser null
+
+    const topePorPorcentaje = Math.round(precio * pct);
+    // tope efectivo según porcentaje y tope monetario definido para la antigüedad
+    const topeSegunValor = Math.min(topePorPorcentaje, capPorAntiguedad);
+
+    // filtrar planes: debe estar habilitado para ese año y el faltante <= tope efectivo y <= maxFinanciar del plan
+    const aptos = planesUsados
+      .filter(p => p.anios.includes(anio))
+      .map(p => {
+        const topeEfectivo = Math.min(p.maxFinanciar, topeSegunValor);
+        return Object.assign({}, p, { topeEfectivo });
+      })
+      .filter(p => faltante <= p.topeEfectivo)
+      .filter(p => {
+        if (!maxCuotasPorAntiguedad) return true;
+        return p.cuotas <= maxCuotasPorAntiguedad;
+      });
+
+    if (aptos.length === 0){
+      vacioDiv.textContent = "No hay planes disponibles para este año y monto a financiar (tope según %/cap: $"+ formatMoney(topeSegunValor) +", % aplicado: "+ Math.round(pct*100) +"%).";
+      vacioDiv.style.display = "block";
+      return;
+    }
+
+    vacioDiv.style.display = "none";
+
+    aptos.sort((a,b)=>{
+      const ca = (faltante/1000)*a.coef;
+      const cb = (faltante/1000)*b.coef;
+      return ca - cb;
+    });
+
+    for(const p of aptos){
+      const cuota = (faltante / 1000) * p.coef;
+      const gastoTotal = (faltante * (p.gasto/100)) * 1.21;
+
+      const card = document.createElement("div");
+      card.className = "card plan-card";
+      card.innerHTML = `
+        <div class="row">
+          <div>
+            <span class="tag">${p.tipo}</span>
+            <span class="tag">${p.cuotas} cuotas</span>
+          </div>
+          <div class="muted">Tope: $${formatMoney(p.topeEfectivo)} (plan max $${formatMoney(p.maxFinanciar)} / ${Math.round(pct*100)}% / cap $${formatMoney(capPorAntiguedad)})</div>
+        </div>
+        <h3>Cuota: $${formatMoney(cuota)}</h3>
+        <div class="row"><span>Monto financiado</span><strong>$${formatMoney(faltante)}</strong></div>
+        <div class="row"><span>Gasto otorgamiento + IVA</span><strong>$${formatMoney(gastoTotal)}</strong></div>
+        <div class="row"><span>TNA</span><strong>${p.tna}%</strong></div>
+        <div class="row"><span>Año</span><strong>${anio}</strong></div>
+      `;
+      resultadoDiv.appendChild(card);
+    }
   }
 
   function calcular(){
@@ -292,8 +533,17 @@
     $("vacio").style.display = "block";
   }
 
+  function showTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+    document.querySelector(`.tab[onclick="showTab('${tab}')"]`).classList.add('active');
+    document.getElementById(tab).style.display = 'block';
+  }
+
+  // eventos
   $("btnCalcular").addEventListener("click", calcular);
   $("btnLimpiar").addEventListener("click", limpiar);
+  $("btnCalcularUsados").addEventListener("click", calcularUsados);
 </script>
 </body>
 </html>
