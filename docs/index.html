@@ -174,6 +174,16 @@
             <input type="number" id="anticipo" placeholder="Ej: 5000000" min="0" step="1000" />
           </div>
 
+          <!-- selector tipo cotización (OKM) -->
+          <div class="form-group" style="grid-column: span 12;">
+            <label>Tipo de cotización</label>
+            <div style="display:flex;gap:.75rem;margin-top:.35rem">
+              <label><input type="radio" name="tipoOkm" value="AMBOS" checked> Ambos</label>
+              <label><input type="radio" name="tipoOkm" value="FIJA"> FIJA</label>
+              <label><input type="radio" name="tipoOkm" value="UVA"> UVA</label>
+            </div>
+          </div>
+
           <div class="form-group" style="grid-column: span 12;">
             <div class="actions">
               <button id="btnCalcular">Calcular opciones</button>
@@ -213,6 +223,16 @@
           <div class="form-group">
             <label>Anticipo (ARS):</label>
             <input type="number" id="anticipoUsado" placeholder="Ej: 3000000" min="0" step="1000">
+          </div>
+
+          <!-- selector tipo cotización (USADOS) -->
+          <div class="form-group" style="grid-column: span 12;">
+            <label>Tipo de cotización</label>
+            <div style="display:flex;gap:.75rem;margin-top:.35rem">
+              <label><input type="radio" name="tipoUsados" value="AMBOS" checked> Ambos</label>
+              <label><input type="radio" name="tipoUsados" value="FIJA"> FIJA</label>
+              <label><input type="radio" name="tipoUsados" value="UVA"> UVA</label>
+            </div>
           </div>
 
           <div class="form-group" style="margin-top:.5rem">
@@ -376,6 +396,7 @@
     const anio = parseInt($("anioUsado").value);
     const precio = parseFloat($("precioUsado").value);
     const anticipo = parseFloat($("anticipoUsado").value);
+    const tipoSel = document.querySelector('input[name="tipoUsados"]:checked').value;
     const resultadoDiv = $("resultadoUsados");
     const vacioDiv = $("vacioUsados");
 
@@ -400,12 +421,11 @@
     const maxCuotasPorAntiguedad = condiciones.maxCuotas; // puede ser null
 
     const topePorPorcentaje = Math.round(precio * pct);
-    // tope efectivo según porcentaje y tope monetario definido para la antigüedad
     const topeSegunValor = Math.min(topePorPorcentaje, capPorAntiguedad);
 
-    // filtrar planes: debe estar habilitado para ese año y el faltante <= tope efectivo y <= maxFinanciar del plan
     const aptos = planesUsados
       .filter(p => p.anios.includes(anio))
+      .filter(p => tipoSel === 'AMBOS' || p.tipo === tipoSel) // <-- filtro por tipo
       .map(p => {
         const topeEfectivo = Math.min(p.maxFinanciar, topeSegunValor);
         return Object.assign({}, p, { topeEfectivo });
@@ -458,6 +478,7 @@
     const modelo = $("modelo").value;
     const precio = parseFloat($("precio").value);
     const anticipo = parseFloat($("anticipo").value);
+    const tipoSel = document.querySelector('input[name="tipoOkm"]:checked').value;
     const resultadoDiv = $("resultado");
     const vacioDiv = $("vacio");
 
@@ -477,12 +498,14 @@
       return;
     }
 
-    // Filtro por modelos y por tope de financiación
     const habilitaModelo = (p) =>
       p.modelos.includes("Todos") ||
       p.modelos.includes(modelo);
 
-    const aptos = planes.filter(p => habilitaModelo(p) && faltante <= p.maxFinanciar);
+    const aptos = planes
+      .filter(p => habilitaModelo(p))
+      .filter(p => faltante <= p.maxFinanciar)
+      .filter(p => tipoSel === 'AMBOS' || p.tipo === tipoSel); // <-- filtro por tipo
 
     if (aptos.length === 0){
       vacioDiv.textContent = "No hay planes disponibles para este modelo y monto a financiar.";
@@ -492,14 +515,12 @@
 
     vacioDiv.style.display = "none";
 
-    // Orden por cuota ascendente
     aptos.sort((a,b)=>{
       const ca = (faltante/1000)*a.coef;
       const cb = (faltante/1000)*b.coef;
       return ca - cb;
     });
 
-    // Render
     for(const p of aptos){
       const cuota = (faltante / 1000) * p.coef;
       const gastoTotal = (faltante * (p.gasto/100)) * 1.21;
