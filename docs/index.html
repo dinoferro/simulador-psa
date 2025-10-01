@@ -238,6 +238,7 @@
           <div class="form-group" style="margin-top:.5rem">
             <div class="actions">
               <button id="btnCalcularUsados">Calcular</button>
+              <button id="btnLimpiarUsados" style="background:#64748b">Limpiar</button>
             </div>
             <div class="muted" style="margin-top:.5rem">
               Para usados se aplica además un tope % sobre el valor de la unidad según año.
@@ -262,23 +263,23 @@
   // Tabla EXACTA de tu última imagen (OKM)
   const planes = [
     // FIJA (Azul)
-    { maxFinanciar: 16000000, cuotas: 12, tna: 0.00, gasto: 10, coef: 83.33, modelos: ["Todos"], tipo: "FIJA" },
-    { maxFinanciar: 16000000, cuotas: 18, tna: 12.90, gasto: 10, coef: 63.66, modelos: ["Todos"], tipo: "FIJA" },
-    { maxFinanciar: 16000000, cuotas: 24, tna: 17.90, gasto: 10, coef: 53.01, modelos: ["Todos"], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 12, tna: 0.00, gasto: 8, coef: 83.33, modelos: ["Todos"], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 18, tna: 0.00, gasto: 10, coef: 55.56, modelos: ["Todos"], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 24, tna: 13.90, gasto: 10, coef: 50.40, modelos: ["Todos"], tipo: "FIJA" },
 
     { maxFinanciar: 18000000, cuotas: 18, tna: 12.90, gasto: 10, coef: 63.66, modelos: ["208","2008"], tipo: "FIJA" },
     { maxFinanciar: 18000000, cuotas: 24, tna: 22.90, gasto: 10, coef: 56.33, modelos: ["208","2008"], tipo: "FIJA" },
     { maxFinanciar: 18000000, cuotas: 36, tna: 34.90, gasto: 10, coef: 51.29, modelos: ["208","2008"], tipo: "FIJA" },
 
-    { maxFinanciar: 22000000, cuotas: 18, tna: 25.90, gasto: 10, coef: 72.17, modelos: ["Todos"], tipo: "FIJA" },
-    { maxFinanciar: 22000000, cuotas: 24, tna: 34.90, gasto: 10, coef: 64.57, modelos: ["Todos"], tipo: "FIJA" },
-    { maxFinanciar: 22000000, cuotas: 36, tna: 44.90, gasto: 10, coef: 58.87, modelos: ["Todos"], tipo: "FIJA" },
+    { maxFinanciar: 22000000, cuotas: 18, tna: 20.90, gasto: 10, coef: 68.85, modelos: ["Todos"], tipo: "FIJA" },
+    { maxFinanciar: 22000000, cuotas: 24, tna: 29.90, gasto: 10, coef: 61.09, modelos: ["Todos"], tipo: "FIJA" },
+    { maxFinanciar: 22000000, cuotas: 36, tna: 39.90, gasto: 10, coef: 55.03, modelos: ["Todos"], tipo: "FIJA" },
 
-    { maxFinanciar: 32000000, cuotas: 12, tna: 32.90, gasto: 8, coef: 104.68, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
-    { maxFinanciar: 32000000, cuotas: 18, tna: 44.90, gasto: 8, coef: 85.20, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
-    { maxFinanciar: 32000000, cuotas: 24, tna: 49.90, gasto: 8, coef: 75.39, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
-    { maxFinanciar: 32000000, cuotas: 36, tna: 56.90, gasto: 8, coef: 68.40, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
-    { maxFinanciar: 32000000, cuotas: 48, tna: 59.90, gasto: 8, coef: 65.73, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
+    { maxFinanciar: 32000000, cuotas: 12, tna: 26.50, gasto: 8, coef: 104.41, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
+    { maxFinanciar: 32000000, cuotas: 18, tna: 39.50, gasto: 8, coef: 81.43, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
+    { maxFinanciar: 32000000, cuotas: 24, tna: 44.50, gasto: 8, coef: 71.43, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
+    { maxFinanciar: 32000000, cuotas: 36, tna: 51.50, gasto: 8, coef: 64.06, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
+    { maxFinanciar: 32000000, cuotas: 48, tna: 53.50, gasto: 8, coef: 60.21, modelos: ["Boxer","Expert","3008","5008"], tipo: "FIJA" },
 
     // UVA (Verde)
     { maxFinanciar: 18000000, cuotas: 12, tna: 2.90, gasto: 2, coef: 85.16, modelos: ["208","Partner","2008"], tipo: "UVA" },
@@ -298,47 +299,47 @@
   // Tabla de planes para Usados (valores base por plan) - corregido: 'anios' como array de números
   const planesUsados = [
     // Años 2025–2022
-    { maxFinanciar: 50000000, cuotas: 12, tna: 79.90, gasto: 0, coef: 137.60, anios: [2025,2024,2023,2022], tipo: "FIJA" },
-    { maxFinanciar: 50000000, cuotas: 18, tna: 79.90, gasto: 0, coef: 110.96, anios: [2025,2024,2023,2022], tipo: "FIJA" },
-    { maxFinanciar: 50000000, cuotas: 24, tna: 79.90, gasto: 0, coef: 98.57,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
-    { maxFinanciar: 50000000, cuotas: 36, tna: 79.90, gasto: 0, coef: 87.82,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
-    { maxFinanciar: 50000000, cuotas: 48, tna: 79.90, gasto: 0, coef: 83.73,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
-    { maxFinanciar: 50000000, cuotas: 60, tna: 79.90, gasto: 0, coef: 81.99,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 12, tna: 74.50, gasto: 0, coef: 133.68, anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 18, tna: 74.50, gasto: 0, coef: 106.84, anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 24, tna: 74.50, gasto: 0, coef: 94.26,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 36, tna: 74.50, gasto: 0, coef: 83.14,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 48, tna: 74.50, gasto: 0, coef: 78.77,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 60, tna: 74.50, gasto: 0, coef: 76.84,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
 
-    { maxFinanciar: 50000000, cuotas: 12, tna: 46.90, gasto: 10, coef: 114.19, anios: [2025,2024,2023,2022], tipo: "FIJA" },
-    { maxFinanciar: 50000000, cuotas: 18, tna: 56.90, gasto: 10, coef: 93.79,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
-    { maxFinanciar: 50000000, cuotas: 24, tna: 58.90, gasto: 10, coef: 82.13,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
-    { maxFinanciar: 50000000, cuotas: 36, tna: 62.90, gasto: 10, coef: 73.33,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
-    { maxFinanciar: 50000000, cuotas: 48, tna: 64.90, gasto: 10, coef: 70.13,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
-    { maxFinanciar: 50000000, cuotas: 60, tna: 64.90, gasto: 10, coef: 67.84,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 12, tna: 41.50, gasto: 10, coef: 110.49, anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 18, tna: 51.50, gasto: 10, coef: 89.89,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 24, tna: 53.50, gasto: 10, coef: 78.06,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 36, tna: 57.50, gasto: 10, coef: 68.89,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 48, tna: 59.50, gasto: 10, coef: 65.38,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
+    { maxFinanciar: 50000000, cuotas: 60, tna: 59.50, gasto: 10, coef: 62.87,  anios: [2025,2024,2023,2022], tipo: "FIJA" },
 
     // Años 2021–2018
-    { maxFinanciar: 30000000, cuotas: 12, tna: 79.90, gasto: 0, coef: 137.60, anios: [2021,2020,2019,2018], tipo: "FIJA" },
-    { maxFinanciar: 30000000, cuotas: 18, tna: 79.90, gasto: 0, coef: 110.96, anios: [2021,2020,2019,2018], tipo: "FIJA" },
-    { maxFinanciar: 30000000, cuotas: 24, tna: 79.90, gasto: 0, coef: 98.57,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
-    { maxFinanciar: 30000000, cuotas: 36, tna: 79.90, gasto: 0, coef: 87.82,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
-    { maxFinanciar: 30000000, cuotas: 48, tna: 79.90, gasto: 0, coef: 83.73,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
-    { maxFinanciar: 30000000, cuotas: 60, tna: 79.90, gasto: 0, coef: 81.99,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 12, tna: 74.50, gasto: 0, coef: 133.68, anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 18, tna: 74.50, gasto: 0, coef: 106.84, anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 24, tna: 74.50, gasto: 0, coef: 94.26,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 36, tna: 74.50, gasto: 0, coef: 83.14,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 48, tna: 74.50, gasto: 0, coef: 78.77,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 60, tna: 74.50, gasto: 0, coef: 76.84,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
 
-    { maxFinanciar: 30000000, cuotas: 12, tna: 46.90, gasto: 10, coef: 114.19, anios: [2021,2020,2019,2018], tipo: "FIJA" },
-    { maxFinanciar: 30000000, cuotas: 18, tna: 56.90, gasto: 10, coef: 93.79,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
-    { maxFinanciar: 30000000, cuotas: 24, tna: 58.90, gasto: 10, coef: 82.13,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
-    { maxFinanciar: 30000000, cuotas: 36, tna: 62.90, gasto: 10, coef: 73.33,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
-    { maxFinanciar: 30000000, cuotas: 48, tna: 64.90, gasto: 10, coef: 70.13,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
-    { maxFinanciar: 30000000, cuotas: 60, tna: 64.90, gasto: 10, coef: 67.84,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 12, tna: 41.50, gasto: 10, coef: 110.49, anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 18, tna: 51.50, gasto: 10, coef: 89.89,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 24, tna: 53.50, gasto: 10, coef: 78.06,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 36, tna: 57.50, gasto: 10, coef: 68.89,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 48, tna: 59.50, gasto: 10, coef: 65.38,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
+    { maxFinanciar: 30000000, cuotas: 60, tna: 59.50, gasto: 10, coef: 62.87,  anios: [2021,2020,2019,2018], tipo: "FIJA" },
 
     // Años 2017–2015
-    { maxFinanciar: 15000000, cuotas: 12, tna: 79.90, gasto: 0, coef: 137.60, anios: [2017,2016,2015], tipo: "FIJA" },
-    { maxFinanciar: 15000000, cuotas: 18, tna: 79.90, gasto: 0, coef: 110.96, anios: [2017,2016,2015], tipo: "FIJA" },
-    { maxFinanciar: 15000000, cuotas: 24, tna: 79.90, gasto: 0, coef: 98.57,  anios: [2017,2016,2015], tipo: "FIJA" },
-    { maxFinanciar: 15000000, cuotas: 36, tna: 79.90, gasto: 0, coef: 87.82,  anios: [2017,2016], tipo: "FIJA" },
-    { maxFinanciar: 15000000, cuotas: 48, tna: 79.90, gasto: 0, coef: 83.73,  anios: [2017], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 12, tna: 74.50, gasto: 0, coef: 133.68, anios: [2017,2016,2015], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 18, tna: 74.50, gasto: 0, coef: 106.84, anios: [2017,2016,2015], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 24, tna: 74.50, gasto: 0, coef: 94.26,  anios: [2017,2016,2015], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 36, tna: 74.50, gasto: 0, coef: 83.14,  anios: [2017,2016], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 48, tna: 74.50, gasto: 0, coef: 78.77,  anios: [2017], tipo: "FIJA" },
 
-    { maxFinanciar: 15000000, cuotas: 12, tna: 46.90, gasto: 10, coef: 114.19, anios: [2017,2016,2015], tipo: "FIJA" },
-    { maxFinanciar: 15000000, cuotas: 18, tna: 56.90, gasto: 10, coef: 93.79,  anios: [2017,2016,2015], tipo: "FIJA" },
-    { maxFinanciar: 15000000, cuotas: 24, tna: 58.90, gasto: 10, coef: 82.13,  anios: [2017,2016,2015], tipo: "FIJA" },
-    { maxFinanciar: 15000000, cuotas: 36, tna: 62.90, gasto: 10, coef: 73.33,  anios: [2017,2016], tipo: "FIJA" },
-    { maxFinanciar: 15000000, cuotas: 48, tna: 64.90, gasto: 10, coef: 67.84,  anios: [2017], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 12, tna: 41.50, gasto: 10, coef: 110.49, anios: [2017,2016,2015], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 18, tna: 51.50, gasto: 10, coef: 89.89,  anios: [2017,2016,2015], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 24, tna: 53.50, gasto: 10, coef: 78.06,  anios: [2017,2016,2015], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 36, tna: 57.50, gasto: 10, coef: 68.89,  anios: [2017,2016], tipo: "FIJA" },
+    { maxFinanciar: 15000000, cuotas: 48, tna: 59.50, gasto: 10, coef: 65.38,  anios: [2017], tipo: "FIJA" },
 
     // UVA usados (corregido: usa 'anios')
     { maxFinanciar: 40000000, cuotas: 12, tna: 36.90, gasto: 0, coef: 107.37, anios: [2025,2024,2023,2022,2021,2020,2019,2018,2017,2016,2015], tipo: "UVA" },
@@ -565,6 +566,16 @@
   $("btnCalcular").addEventListener("click", calcular);
   $("btnLimpiar").addEventListener("click", limpiar);
   $("btnCalcularUsados").addEventListener("click", calcularUsados);
+  $("btnLimpiarUsados").addEventListener("click", limpiarUsados);
+  
+  function limpiarUsados(){
+    $("anioUsado").value = "";
+    $("precioUsado").value = "";
+    $("anticipoUsado").value = "";
+    $("resultadoUsados").innerHTML = "";
+    $("vacioUsados").textContent = "Completá año, precio y anticipo para ver opciones de usados.";
+    $("vacioUsados").style.display = "block";
+  }
 </script>
 </body>
 </html>
